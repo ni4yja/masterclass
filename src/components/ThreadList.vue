@@ -13,7 +13,7 @@
             </p>
           </div>
         <div class="activity">
-          <p class="replies-count">{{ thread.posts.length }} replies</p>
+          <p class="replies-count">{{ thread.repliesCount }} replies</p>
           <img class="avatar-medium" :src="userById(thread.userId).avatar" alt="avatar">
           <div>
             <p class="text-xsmall">
