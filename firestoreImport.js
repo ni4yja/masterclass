@@ -1,6 +1,13 @@
 // Imports
-const firestoreService = require('firestore-export-import')
-const firebaseConfig = require('./src/config/firebase.js')
+const { initializeFirebaseApp, restore } = require('firestore-export-import')
+const firebaseConfig = {
+  apiKey: "AIzaSyA5zzEDS8x-Qo49X44U6f3sAuTi7x1KTBU",
+  authDomain: "vue-school-forum-7ad8c.firebaseapp.com",
+  projectId: "vue-school-forum-7ad8c",
+  storageBucket: "vue-school-forum-7ad8c.appspot.com",
+  messagingSenderId: "794816557110",
+  appId: "1:794816557110:web:c32a8e0db310365d79a897"
+};
 const serviceAccount = require('./serviceAccount.json')
 const fs = require('fs')
 const tempFileName = `${__dirname}/data-temp.json`;
@@ -22,10 +29,10 @@ const tempFileName = `${__dirname}/data-temp.json`;
 async function jsonToFirestore () {
   try {
     console.log('Initialzing Firebase')
-    await firestoreService.initializeApp(serviceAccount, firebaseConfig.databaseURL)
+    await initializeFirebaseApp(serviceAccount, firebaseConfig.databaseURL)
     console.log('Firebase Initialized')
 
-    await firestoreService.restore(tempFileName)
+    await restore(tempFileName)
     console.log('Upload Success')
   } catch (error) {
     console.log(error)
