@@ -60,19 +60,19 @@ const routes = [
     name: 'ThreadShow',
     component: ThreadShow,
     props: true,
-    beforeEnter(to, from, next) {
-      const threadExists = findById(sourceData.threads, to.params.id)
-      if (threadExists) {
-        return next();
-      } else {
-        next({
-          name: 'NotFound',
-          params: { pathMatch: to.path.substring(1).split('/') },
-          query: to.query,
-          hash: to.hash,
-        })
-      }
-    },
+    // beforeEnter(to, from, next) {
+    //   const threadExists = findById(sourceData.threads, to.params.id)
+    //   if (threadExists) {
+    //     return next();
+    //   } else {
+    //     next({
+    //       name: 'NotFound',
+    //       params: { pathMatch: to.path.substring(1).split('/') },
+    //       query: to.query,
+    //       hash: to.hash,
+    //     })
+    //   }
+    // },
   },
   {
     path: '/:pathMatch(.*)*',

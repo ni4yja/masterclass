@@ -22,8 +22,6 @@
 <script>
 import PostList from '../components/PostList.vue';
 import PostEditor from '../components/PostEditor.vue';
-import { firestore } from '../main';
-import { collection, doc, onSnapshot } from '@firebase/firestore';
 
 export default {
   name: 'PageHome',
@@ -60,12 +58,15 @@ export default {
       this.$store.dispatch('createPost', post);
     },
   },
-  created() {
-    // fetch the tread
-    onSnapshot(doc(firestore, 'threads', this.id), (doc) => {
-      const thread = { ...doc.data(), id: doc.id };
-      this.$store.commit('setThread', { thread });
-    });
+  async created() {
+    const thread = await this.$store.dispatch('fetchThread', { id: this.id });
+
+    this.$store.dispatch('fetchUser', { id: thread.userId });
+
+    const posts = await this.$store.dispatch('fetchPosts', { ids: thread.posts });
+    // fetch the users associated with the posts
+    const users = posts.map(post => post.userId);
+    this.$store.dispatch('fetchUsers', { ids: users });
   },
 }
 </script>

@@ -1,23 +1,22 @@
 <template>
   <div class="col-full">
     <div class="thread-list">
-      
       <h2 class="list-title">Threads</h2>
       <div v-for="thread in threads" :key="thread.id" class="thread">
         <div>
             <p>
-              <router-link :to="{name: 'ThreadShow', params: {id: thread.id}}">{{ thread.title }}</router-link>
+              <router-link v-if="thread.id" :to="{name: 'ThreadShow', params: {id: thread.id}}">{{ thread.title }}</router-link>
             </p>
             <p class="text-faded text-xsmall">
-              By <a href="#">{{ userById(thread?.userId).name }}</a>, <AppDate :timestamp="thread.publishedAt" />.
+              By <a href="#">{{ userById(thread.userId)?.name }}</a>, <AppDate :timestamp="thread.publishedAt" />.
             </p>
           </div>
         <div class="activity">
           <p class="replies-count">{{ thread?.repliesCount }} replies</p>
-          <img class="avatar-medium" :src="userById(thread?.userId).avatar" alt="avatar">
+          <img class="avatar-medium" :src="userById(thread.userId).avatar" alt="avatar">
           <div>
             <p class="text-xsmall">
-              <a href="#">{{ userById(thread?.userId).name }}</a>
+              <a href="#">{{ userById(thread.userId).name }}</a>
             </p>
             <p class="text-xsmall text-faded"><app-date :timestamp="thread.publishedAt"/></p>
           </div>
@@ -51,7 +50,7 @@ export default {
       return findById(this.posts, id);
     },
     userById(id) {
-      return findById(this.users, id);
+      return findById(this.users, id) || {};
     },
   }
 }
