@@ -1,14 +1,24 @@
 import { findById } from '../helpers';
 import { firestore } from '../main';
-import { doc, onSnapshot, getDocs, collection } from '@firebase/firestore';
+import { doc, onSnapshot, getDocs, collection, writeBatch, arrayUnion } from '@firebase/firestore';
 
 export default {
-  createPost({ commit, state }, post) {
-    post.id = 'qqqq' + Math.random();
+  async createPost({ commit, state }, post) {
     post.userId = state.authId;
     post.publishedAt = Math.floor(Date.now() / 1000);
-    commit('setItem', { resource: 'posts', item: post }); // set the post
-    commit('appendPostToThread', { childId: post.id, parentId: post.threadId });
+
+    const batch = writeBatch(firestore);
+    const postRef = doc(collection(firestore, 'posts'));
+    batch.set(postRef, post);
+    batch.update(doc(firestore, 'threads', post.threadId), {
+      posts: arrayUnion(postRef.id),
+      contributors: arrayUnion(state.authId),
+    });
+
+    await batch.commit();
+
+    commit('setItem', { resource: 'posts', item: { ...post, id: postRef.id } }); // set the post
+    commit('appendPostToThread', { childId: postRef.id, parentId: post.threadId });
     commit('appendContributorToThread', { childId: state.authId, parentId: post.threadId });
   },
   async createThread({ commit, state, dispatch }, { title, text, forumId }) {
@@ -42,6 +52,7 @@ export default {
   fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id }),
   fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id }),
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id }),
+  fetchAuthUser: ({ dispatch, state }) => dispatch('fetchItem', { resource: 'users', id: state.authId }),
   // ---------------------------------------
   // Fetch All of a Resource
   // ---------------------------------------
