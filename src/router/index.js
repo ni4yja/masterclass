@@ -10,6 +10,7 @@ import NotFound from '../pages/NotFound.vue';
 import Forum from '../pages/Forum.vue';
 import Category from '../pages/Category.vue';
 import Profile from '../pages/Profile.vue';
+import store from '../store';
 
 const history = createWebHistory();
 
@@ -81,7 +82,7 @@ const routes = [
   }
 ]
 
-export default createRouter({
+const router = createRouter({
   history,
   routes,
   scrollBehavior(to) {
@@ -91,3 +92,9 @@ export default createRouter({
     return scroll
   }
 });
+
+router.beforeEach(() => {
+  store.dispatch('unsubscribeAllSnapshots');
+});
+
+export default router;

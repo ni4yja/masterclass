@@ -7,6 +7,8 @@ import store from './store';
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
+import FontAwesome from './plugins/FontAwesome';
+
 import './style.css';
 
 const firebaseConfig = {
@@ -27,4 +29,5 @@ const forumApp = createApp(App);
 forumApp.use(router);
 forumApp.use(store);
 forumApp.component('AppDate', AppDate);
+forumApp.use(FontAwesome);
 forumApp.mount('#app');
