@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import AppDate from './components/AppDate.vue';
+import AppSpinner from './components/AppSpinner.vue';
 import router from './router';
 import store from './store';
 
@@ -29,5 +30,6 @@ const forumApp = createApp(App);
 forumApp.use(router);
 forumApp.use(store);
 forumApp.component('AppDate', AppDate);
+forumApp.component('AppSpinner', AppSpinner);
 forumApp.use(FontAwesome);
 forumApp.mount('#app');

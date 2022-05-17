@@ -1,60 +1,68 @@
 <template>
-  <div v-if="forum" class="col-full push-top">
-    <div class="forum-header">
-      <div class="forum-details">
-        <h1>{{ forum.name }}</h1>
-        <p class="text-lead">{{ forum.description }}</p>
-      </div>
-      <router-link 
-        :to="{ name: 'ThreadCreate', params: { forumId: forum.id }}"
-        class="btn-green btn-small"
+  <div
+    v-if="asyncDataStatus_ready"
+    class="container col-full"
+  >
+    <div v-if="forum" class="col-full push-top">
+      <div class="forum-header">
+        <div class="forum-details">
+          <h1>{{ forum.name }}</h1>
+          <p class="text-lead">{{ forum.description }}</p>
+        </div>
+        <router-link
+          :to="{ name: 'ThreadCreate', params: { forumId: forum.id } }"
+          class="btn-green btn-small"
         >
           Start a thread
         </router-link>
+      </div>
     </div>
-  </div>
-
-  <div class="col-full push-top">
-    <ThreadList :threads="threads"/>
+    <div class="col-full push-top">
+      <ThreadList :threads="threads" />
+    </div>
   </div>
 </template>
 
 <script>
-import ThreadList from '../components/ThreadList.vue';
-import { findById } from '../helpers';
-import { mapActions } from 'vuex';
+import ThreadList from "../components/ThreadList.vue";
+import { findById } from "../helpers";
+import { mapActions } from "vuex";
+import asyncDataStatus from "../mixins/asyncDataStatus";
 
 export default {
-  name: 'Forum',
+  name: "Forum",
   components: {
     ThreadList,
   },
   props: {
     id: {
       required: true,
-      type: String
-    }
+      type: String,
+    },
   },
+  mixins: [asyncDataStatus],
   computed: {
     forum() {
       return findById(this.$store.state.forums, this.id);
     },
     threads() {
       if (!this.forum) return [];
-      return this.forum.threads.map(threadId => this.$store.getters.thread(threadId));
-    }
+      return this.forum.threads.map((threadId) =>
+        this.$store.getters.thread(threadId)
+      );
+    },
   },
-  async created () {
+  async created() {
     const forum = await this.fetchForum({ id: this.id });
     const threads = await this.fetchThreads({ ids: forum.threads });
-    this.fetchUsers({ ids: threads.map(thread => thread.userId) });
+    await this.fetchUsers({ ids: threads.map((thread) => thread.userId) });
+    this.asyncDataStatus_fetched();
   },
   methods: {
-    ...mapActions(['fetchForum', 'fetchThreads', 'fetchUsers']),
+    ...mapActions(["fetchForum", "fetchThreads", "fetchUsers"]),
   },
-}
+};
 </script>
 
 <style>
-
 </style>
